@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>مدير روابط التطبيقات</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="container">
+    <header class="top">
+      <h1>📦 مدير روابط التطبيقات</h1>
+      <button id="addBtn" class="btn primary">+ أضف تطبيق جديد</button>
+    </header>
+
+    <section id="formBox" class="card hidden">
+      <h2 id="formTitle">تطبيق جديد</h2>
+      <form id="appForm">
+        <label>
+          اسم التطبيق
+          <input type="text" id="appName" placeholder="اكتب اسم التطبيق" required>
+        </label>
+
+        <div class="radios">
+          <label class="radio"><input type="radio" name="source" value="file" checked> اختيار ملف من مجلد apk</label>
+          <label class="radio"><input type="radio" name="source" value="url"> رابط من الإنترنت (مثل GitHub)</label>
+        </div>
+
+        <div id="fileBox">
+          <label>
+            ملف APK (من مجلد apk)
+            <select id="apkSelect"></select>
+          </label>
+          <p id="noFiles" class="hint hidden">لا توجد ملفات APK في مجلد <code>apk/</code>. ضع الملفات هناك ثم اضغط تحديث.</p>
+          <button type="button" id="refreshFiles" class="btn small">تحديث القائمة</button>
+        </div>
+
+        <div id="urlBox" class="hidden">
+          <label>
+            رابط الملف
+            <input type="text" id="appUrl" class="ltr" placeholder="https://github.com/user/repo/releases/download/v1.0/app.apk" autocomplete="off">
+          </label>
+          <p class="hint">يعمل مع أي نوع ملف (apk, zip, pdf, exe ...) وسيُحمَّل بنفس صيغته واسمه الأصلي. روابط صفحات GitHub (blob) تُحوَّل تلقائياً إلى رابط الملف المباشر.</p>
+        </div>
+
+        <div class="row spaced">
+          <button type="submit" class="btn primary">حفظ</button>
+          <button type="button" id="cancelBtn" class="btn">إلغاء</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="resultBox" class="card success hidden">
+      <h2>✅ تم الحفظ — رابط التحميل</h2>
+      <div class="linkline">
+        <input type="text" id="resultLink" readonly>
+        <button id="copyResult" class="btn primary">نسخ</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>التطبيقات المسجلة</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>اسم التطبيق</th>
+              <th>المصدر</th>
+              <th>الرابط</th>
+              <th>الوقت والتاريخ</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <p id="empty" class="hint hidden">لا توجد تطبيقات مسجلة بعد.</p>
+    </section>
+  </main>
+  <div id="toast" class="toast"></div>
+  <script src="script.js"></script>
+</body>
+</html>

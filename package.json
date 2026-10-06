@@ -1,0 +1,12 @@
+{
+  "name": "apk-link-manager",
+  "version": "1.0.0",
+  "description": "إدارة وتوليد روابط تحميل لملفات APK",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
