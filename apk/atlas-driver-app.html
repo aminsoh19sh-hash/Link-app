@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>أطلس للتوصيل | Atlas Livraison</title>
+<!-- صفحة واحدة مستقلة: تتصل بالسيرفر عبر API. غيّر العنوان من زر ⚙ API في الفوتر -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f4ee;--bg2:#fff;--ink:#14163a;--mut:#5d6085;--line:#14163a1f;--blue:#2a3cd9;--blue2:#5b6cff;--gold:#f2b200;--ok:#12a36b;--warn:#e29a00;--bad:#d93a4a;--sh:0 20px 50px -20px #14163a55}
+[data-theme=dark]{--bg:#0b0d26;--bg2:#13163a;--ink:#f1f2ff;--mut:#9fa3d6;--line:#ffffff1f;--sh:0 20px 50px -20px #000}
+*{box-sizing:border-box;margin:0}html{scroll-behavior:smooth}
+body{font-family:'Cairo',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7;transition:background .3s,color .3s;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-1;opacity:.5;background:radial-gradient(circle at 15% 10%,#2a3cd933,transparent 40%),radial-gradient(circle at 90% 30%,#f2b20026,transparent 35%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cpath d='M28 4l8 20 20 4-20 8-8 20-8-20-20-8 20-4z' fill='none' stroke='%232a3cd91c'/%3E%3C/svg%3E")}
+a{color:inherit}button,input,select{font:inherit;color:inherit}
+.wrap{max-width:1140px;margin:auto;padding:0 20px}
+header{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:color-mix(in srgb,var(--bg) 78%,transparent);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:14px;height:68px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:1.3rem;text-decoration:none}
+.logo i{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--blue2));display:grid;place-items:center;font-style:normal;box-shadow:0 8px 20px -6px var(--blue)}
+nav{display:flex;gap:4px;margin-inline:auto}nav a{padding:6px 12px;border-radius:10px;text-decoration:none;color:var(--mut);font-weight:600;font-size:.95rem}nav a:hover{background:var(--line);color:var(--ink)}
+.tools{display:flex;gap:8px;align-items:center}
+.ico,.sel{height:40px;border-radius:12px;border:1px solid var(--line);background:var(--bg2);cursor:pointer;padding:0 12px}.ico{width:40px;padding:0}
+.btn{border:0;cursor:pointer;border-radius:14px;padding:12px 26px;font-weight:800;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;box-shadow:0 12px 28px -10px var(--blue);transition:transform .2s}
+.btn:hover{transform:translateY(-2px)}.btn.gold{background:var(--gold);color:#241a00;box-shadow:0 12px 28px -10px var(--gold)}.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.btn.sm{padding:6px 14px;border-radius:10px;font-size:.85rem}.btn.ok{background:var(--ok)}.btn.warn{background:var(--warn)}.btn.bad{background:var(--bad)}
+section{padding:80px 0}h1{font-size:clamp(2.2rem,6vw,4.2rem);line-height:1.2;font-weight:900}h2{font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:900;margin-bottom:28px}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding-top:60px}
+.hero p{color:var(--mut);font-size:1.15rem;margin:18px 0 28px;max-width:52ch}
+.route{background:var(--bg2);border:1px solid var(--line);border-radius:28px;padding:20px;box-shadow:var(--sh)}
+.route svg{width:100%;height:auto}.dash{stroke-dasharray:6 8;animation:mv 1.2s linear infinite}@keyframes mv{to{stroke-dashoffset:-14}}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:var(--sh)}.card b{font-size:1.1rem}.card p{color:var(--mut);font-size:.95rem}.card .e{font-size:2rem;display:block}
+.card:nth-child(2n){border-radius:22px 22px 22px 6px}
+details{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:16px 20px;margin-bottom:10px}summary{cursor:pointer;font-weight:700}details p{color:var(--mut);margin-top:8px}
+.form{max-width:560px;margin:auto;display:grid;gap:14px}
+label{font-weight:700;font-size:.9rem}input,select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg2);outline:0}input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px #2a3cd926}
+.err{color:var(--bad);font-size:.85rem;min-height:1.2em}
+.thanks{text-align:center;padding:40px;border-radius:28px;background:linear-gradient(135deg,var(--blue),#1a24a0);color:#fff;max-width:560px;margin:auto}.thanks .e{font-size:3.4rem;animation:pop .6s}@keyframes pop{from{transform:scale(0)}}
+.order{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center}.order .a{display:flex;gap:6px;flex-wrap:wrap}
+.badge{display:inline-block;padding:2px 12px;border-radius:99px;font-size:.8rem;font-weight:800}.b-accepted,.b-accept{background:#12a36b26;color:var(--ok)}.b-waiting,.b-wait{background:#e29a0026;color:var(--warn)}.b-rejected,.b-reject{background:#d93a4a26;color:var(--bad)}
+footer{border-top:1px solid var(--line);padding:36px 0;color:var(--mut);text-align:center;font-size:.9rem}
+#splash{position:fixed;inset:0;z-index:100;background:var(--blue);color:#fff;display:grid;place-items:center;text-align:center;transition:opacity .6s,visibility .6s}
+#splash .t{font-size:5rem;animation:drive 1.6s ease-in-out infinite}@keyframes drive{50%{transform:translateX(30px)}}
+#gate{position:fixed;inset:0;z-index:90;background:var(--bg);display:grid;place-items:center;padding:20px}.gate{max-width:440px;width:100%;text-align:center}.gate .card{margin-top:20px;display:grid;gap:12px;text-align:start}
+.hide{opacity:0;visibility:hidden;pointer-events:none}[hidden]{display:none!important}
+.burger{display:none}
+@media(max-width:860px){.hero{grid-template-columns:1fr}nav{display:none;position:absolute;top:68px;inset-inline:0;flex-direction:column;background:var(--bg2);padding:12px;border-bottom:1px solid var(--line)}nav.open{display:flex}.burger{display:grid}.bar .btn.sm{display:none}section{padding:56px 0}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+
+.tabs{display:flex;gap:6px;background:var(--line);padding:4px;border-radius:14px}.tabs button{flex:1;border:0;background:none;padding:10px;border-radius:11px;font-weight:800;cursor:pointer}.tabs .on{background:var(--bg2);box-shadow:var(--sh)}.msg{text-align:center;padding:40px 24px;border-radius:28px;max-width:560px;margin:auto}.msg .e{font-size:3.4rem}.msg.bad{background:#d93a4a1f;border:1px solid var(--bad)}.msg.wait{background:linear-gradient(135deg,var(--blue),#1a24a0);color:#fff}
+body[data-view=driver] nav,body[data-view=driver] .cta-h{display:none!important}body[data-view=home] #logout,body[data-view=home] #homeBtn{display:none!important}
+@media(max-width:860px){body[data-view=driver] #homeBtn{display:inline-block!important}body[data-view=driver] #logout:not([hidden]){display:inline-block!important}body[data-view=driver] .burger{display:none}}
+</style>
+</head>
+<body data-view="home">
+<div id="splash"><div><div class="t">🚚</div><h1 style="font-size:2.4rem">Atlas</h1><p data-i="splash">...</p></div></div>
+
+<header><div class="wrap bar">
+<a class="logo" href="#/"><i>🚚</i>Atlas</a>
+<nav id="nav"><a href="#/" data-s="services" data-i="n_svc"></a><a href="#/" data-s="about" data-i="n_about"></a><a href="#/" data-s="faq" data-i="n_faq"></a><a href="#/" data-s="privacy" data-i="n_priv"></a></nav>
+<div class="tools">
+<select id="lang" class="sel" aria-label="language"><option value="ar">🌐 العربية</option><option value="fr">🌐 Français</option><option value="en">🌐 English</option></select>
+<button class="ico" id="theme" aria-label="theme"></button>
+<a class="btn sm cta-h" href="#/driver" data-i="cta"></a><a class="btn sm ghost" id="homeBtn" href="#/" data-i="home" style="display:inline-block"></a><button class="btn sm ghost" id="logout" hidden data-i="logout"></button>
+<button class="ico burger" id="burger" aria-label="menu">☰</button></div></div></header>
+<main id="vHome">
+<section class="wrap hero" style="padding-top:60px"><div>
+<h1 data-i="hero_t"></h1><p data-i="hero_p"></p>
+<a class="btn gold" href="#/driver" data-i="cta"></a></div>
+<div class="route"><svg viewBox="0 0 400 300" aria-hidden="true">
+<path class="dash" d="M70 60 C150 40 120 130 200 120 S300 170 250 230 S160 260 120 250" fill="none" stroke="var(--blue)" stroke-width="3" stroke-linecap="round"/>
+<g fill="var(--gold)"><circle cx="70" cy="60" r="9"/><circle cx="200" cy="120" r="9"/><circle cx="250" cy="230" r="9"/><circle cx="120" cy="250" r="9"/></g>
+<g fill="var(--ink)" font-size="13" font-weight="700"><text x="86" y="52">Tanger</text><text x="214" y="116">Casablanca</text><text x="262" y="236">Marrakech</text><text x="132" y="268">Agadir</text></g>
+<text font-size="30"><animateMotion dur="6s" repeatCount="indefinite" path="M70 60 C150 40 120 130 200 120 S300 170 250 230 S160 260 120 250"/>🚚</text></svg></div></section>
+
+<section id="services"><div class="wrap"><h2 data-i="svc_t"></h2><div class="grid">
+<div class="card"><span class="e">📦</span><b data-i="s1"></b><p data-i="s1d"></p></div>
+<div class="card"><span class="e">🍽️</span><b data-i="s2"></b><p data-i="s2d"></p></div>
+<div class="card"><span class="e">🛒</span><b data-i="s3"></b><p data-i="s3d"></p></div>
+<div class="card"><span class="e">🗺️</span><b data-i="s4"></b><p data-i="s4d"></p></div></div></div></section>
+
+<section id="about"><div class="wrap"><h2 data-i="about_t"></h2><div class="card"><p style="font-size:1.1rem" data-i="about_p"></p></div></div></section>
+
+<section id="faq"><div class="wrap" style="max-width:800px"><h2 data-i="faq_t"></h2>
+<details><summary data-i="q1"></summary><p data-i="a1"></p></details>
+<details><summary data-i="q2"></summary><p data-i="a2"></p></details>
+<details><summary data-i="q3"></summary><p data-i="a3"></p></details>
+<details><summary data-i="q4"></summary><p data-i="a4"></p></details></div></section>
+
+<section id="privacy"><div class="wrap" style="max-width:800px"><h2 data-i="priv_t"></h2><div class="card"><p data-i="priv_p"></p></div></div></section>
+</main>
+<main id="vDriver" class="wrap" style="padding:50px 20px 80px" hidden>
+<div id="auth" class="form card"><h2 style="margin:0;text-align:center" data-i="title"></h2>
+<div class="tabs"><button id="tLogin" class="on" data-i="login"></button><button id="tReg" data-i="register"></button></div>
+<form id="form" novalidate style="display:grid;gap:14px">
+<div class="r"><label data-i="f_name"></label><input id="fullName" autocomplete="name"></div>
+<div class="r"><label data-i="f_phone"></label><input id="phone" type="tel" dir="ltr" placeholder="06XXXXXXXX"></div>
+<div class="r"><label data-i="f_city"></label><select id="city"></select></div>
+<div class="r"><label data-i="f_addr"></label><input id="address"></div>
+<div><label data-i="f_email"></label><input id="email" type="email" dir="ltr" autocomplete="email"></div>
+<div><label data-i="f_pass"></label><input id="pass" type="password" autocomplete="current-password"></div>
+<div class="err" id="err"></div><button class="btn gold" id="go"></button></form></div>
+
+<div id="view" hidden></div>
+</main>
+<footer><div class="wrap"><b>Atlas Livraison</b> · 🇲🇦 <span data-i="foot"></span> · © 2026<button class="ico" id="cfg" title="API" style="width:auto;padding:0 10px;margin-inline-start:10px">⚙ API</button></div></footer>
+<script>
+const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+let LANG = localStorage.lang || 'ar', DICT = {};
+const t = k => (DICT[LANG] && DICT[LANG][k]) || k;
+function applyLang(l) {
+  LANG = l; localStorage.lang = l;
+  document.documentElement.lang = l; document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+  $$('[data-i]').forEach(e => e.textContent = t(e.dataset.i));
+  $$('[data-p]').forEach(e => e.placeholder = t(e.dataset.p));
+  const s = $('#lang'); if (s) s.value = l;
+  window.onLang && window.onLang();
+}
+function applyTheme(m) { document.documentElement.dataset.theme = m; localStorage.theme = m; const b = $('#theme'); if (b) b.textContent = m === 'dark' ? '☀️' : '🌙'; }
+function initCommon(dict) {
+  DICT = dict;
+  applyTheme(localStorage.theme || (matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light'));
+  $('#theme').onclick = () => applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+  $('#lang').onchange = e => applyLang(e.target.value);
+  applyLang(LANG);
+}
+const CITIES = ['الدار البيضاء', 'الرباط', 'مراكش', 'فاس', 'طنجة', 'أكادير', 'مكناس', 'وجدة', 'القنيطرة', 'تطوان', 'تمارة', 'سلا', 'المحمدية', 'الجديدة', 'العيون', 'الداخلة', 'بني ملال', 'الناظور', 'سطات', 'خريبكة', 'تازة', 'الحسيمة', 'آسفي', 'الصويرة', 'ورزازات', 'الرشيدية', 'كلميم', 'شفشاون', 'إفران', 'أخرى'];
+
+const API_BASE=(localStorage.api||'http://192.168.43.24:3000').replace(/\/$/,'');   // ← عنوان السيرفر (أو غيّره من زر ⚙ API)
+const DH={
+ar:{splash:'نوصّل لكل مدن المغرب',gate_t:'مرحباً بك في أطلس',gate_p:'أدخل بريدك الإلكتروني للمتابعة والتسجيل كسائق',enter:'متابعة',email_ph:'name@example.com',n_svc:'خدماتنا',n_about:'عن التطبيق',n_faq:'الأسئلة الشائعة',n_priv:'الخصوصية',cta:'سجّل الآن كسائق',hero_t:'نوصّل أي منتج، لأي مدينة في المغرب',hero_p:'أطلس شركة توصيل مغربية تربط المتاجر والأفراد بسائقين موثوقين من طنجة إلى الكويرة. انضم إلينا واربح من كل طلب.',svc_t:'ماذا نوصّل؟',s1:'الطرود والبضائع',s1d:'من الوثائق إلى الأجهزة الكبيرة.',s2:'الطعام والمشروبات',s2d:'توصيل سريع للمطاعم والمقاهي.',s3:'المشتريات والتسوق',s3d:'نشتري ونوصّل من أي متجر.',s4:'بين المدن',s4d:'شحن بين كل مدن المملكة.',about_t:'عن التطبيق',about_p:'تطبيق أطلس يعطيك الطلبات القريبة منك، وتقبلها أو ترفضها أو تؤجلها بضغطة واحدة. تتابع أرباحك وطلباتك بسهولة، وتعمل في الوقت الذي يناسبك.',form_t:'سجّل كسائق توصيل',f_name:'الاسم الكامل',f_phone:'رقم الهاتف',f_city:'المدينة',f_addr:'العنوان',submit:'سجّل الآن',th_t:'شكراً لثقتك بنا!',th_p:'سنتواصل معك في أقرب وقت لتبدأ توصيل أول طلب.',ord_t:'الطلبات المتاحة',accept:'قبول',wait:'انتظار',reject:'رفض',no_ord:'لا توجد طلبات الآن.',faq_t:'الأسئلة الشائعة',q1:'ما شروط العمل كسائق؟',a1:'عمر 18 سنة فأكثر، هاتف ذكي، ووسيلة نقل (دراجة، سيارة أو شاحنة).',q2:'كم أربح؟',a2:'تربح عن كل طلب، وكلما زادت طلباتك زاد دخلك.',q3:'في أي مدن تعملون؟',a3:'جميع مدن المغرب.',q4:'متى يبدأ العمل؟',a4:'نتواصل معك بعد التسجيل لتبدأ أول طلب.',priv_t:'سياسة الخصوصية',priv_p:'نجمع الاسم والهاتف والمدينة والعنوان لتنسيق التوصيل فقط. لا نبيع بياناتك ولا نرسل رسائل بريدية إلى الزبائن. يمكنك طلب حذف بياناتك في أي وقت.',foot:'صنع في المغرب',e_phone:'رقم الهاتف غير صحيح (مثال: 0612345678)',e_dup:'هذا الرقم مسجل من قبل',e_inv:'تأكد من تعبئة جميع الحقول'},
+fr:{splash:'Nous livrons partout au Maroc',gate_t:'Bienvenue chez Atlas',gate_p:'Entrez votre e-mail pour continuer et devenir livreur',enter:'Continuer',email_ph:'nom@exemple.com',n_svc:'Services',n_about:'L’application',n_faq:'FAQ',n_priv:'Confidentialité',cta:'Devenir livreur',hero_t:'Nous livrons tout produit, dans toute ville du Maroc',hero_p:'Atlas relie commerces et particuliers à des livreurs de confiance, de Tanger à Lagouira. Rejoignez-nous et gagnez à chaque course.',svc_t:'Que livrons-nous ?',s1:'Colis et marchandises',s1d:'Des documents aux gros appareils.',s2:'Repas et boissons',s2d:'Livraison rapide pour restaurants et cafés.',s3:'Courses et achats',s3d:'Nous achetons et livrons depuis tout magasin.',s4:'Inter-villes',s4d:'Envois entre toutes les villes du Royaume.',about_t:'L’application',about_p:'Atlas vous montre les commandes proches : acceptez, refusez ou mettez en attente d’un clic. Suivez vos gains et travaillez quand vous voulez.',form_t:'Inscription livreur',f_name:'Nom complet',f_phone:'Téléphone',f_city:'Ville',f_addr:'Adresse',submit:'S’inscrire',th_t:'Merci pour votre confiance !',th_p:'Nous vous contacterons très bientôt pour votre première livraison.',ord_t:'Commandes disponibles',accept:'Accepter',wait:'En attente',reject:'Refuser',no_ord:'Aucune commande pour le moment.',faq_t:'Questions fréquentes',q1:'Quelles conditions ?',a1:'18 ans minimum, un smartphone et un moyen de transport.',q2:'Combien puis-je gagner ?',a2:'Vous gagnez à chaque commande ; plus vous livrez, plus vous gagnez.',q3:'Dans quelles villes ?',a3:'Toutes les villes du Maroc.',q4:'Quand commencer ?',a4:'Nous vous contactons après l’inscription.',priv_t:'Politique de confidentialité',priv_p:'Nous collectons nom, téléphone, ville et adresse uniquement pour coordonner les livraisons. Vos données ne sont pas vendues et aucun e-mail n’est envoyé aux clients. Suppression possible sur demande.',foot:'Fait au Maroc',e_phone:'Numéro invalide (ex : 0612345678)',e_dup:'Ce numéro est déjà inscrit',e_inv:'Veuillez remplir tous les champs'},
+en:{splash:'Delivering across Morocco',gate_t:'Welcome to Atlas',gate_p:'Enter your email to continue and sign up as a driver',enter:'Continue',email_ph:'name@example.com',n_svc:'Services',n_about:'The app',n_faq:'FAQ',n_priv:'Privacy',cta:'Become a driver',hero_t:'We deliver any product to any city in Morocco',hero_p:'Atlas connects shops and people with trusted drivers from Tangier to Lagouira. Join us and earn on every order.',svc_t:'What we deliver',s1:'Parcels & goods',s1d:'From documents to large appliances.',s2:'Food & drinks',s2d:'Fast delivery for restaurants and cafés.',s3:'Shopping',s3d:'We buy and deliver from any store.',s4:'Between cities',s4d:'Shipping between all cities of the Kingdom.',about_t:'The app',about_p:'Atlas shows nearby orders: accept, reject or hold with one tap. Track your earnings and work whenever you like.',form_t:'Driver sign-up',f_name:'Full name',f_phone:'Phone',f_city:'City',f_addr:'Address',submit:'Sign up now',th_t:'Thank you for your trust!',th_p:'We will contact you very soon so you can start your first delivery.',ord_t:'Available orders',accept:'Accept',wait:'Hold',reject:'Reject',no_ord:'No orders right now.',faq_t:'FAQ',q1:'What are the requirements?',a1:'18+, a smartphone and a vehicle (bike, car or van).',q2:'How much can I earn?',a2:'You earn per order; the more you deliver, the more you earn.',q3:'Which cities?',a3:'All cities in Morocco.',q4:'When do I start?',a4:'We contact you after sign-up.',priv_t:'Privacy policy',priv_p:'We collect name, phone, city and address only to coordinate deliveries. We never sell your data and never email customers. You can ask for deletion anytime.',foot:'Made in Morocco',e_phone:'Invalid phone (e.g. 0612345678)',e_dup:'This number is already registered',e_inv:'Please fill in all fields'}},DD={
+ar:{home:'الرئيسية',logout:'خروج',title:'بوابة السائقين',login:'دخول',register:'حساب جديد',f_name:'الاسم الكامل',f_phone:'رقم الهاتف',f_city:'المدينة',f_addr:'العنوان',f_email:'البريد الإلكتروني',f_pass:'كلمة المرور (6 أحرف على الأقل)',go_login:'دخول',go_reg:'تقديم الطلب',th_t:'شكراً لثقتك بنا!',th_p:'استلمنا طلب تسجيلك، وسنتواصل معك في أقرب وقت حتى يتم قبولك وتبدأ توصيل أول طلب.',wait_t:'طلبك قيد المراجعة',wait_p:'سنتواصل معك في أقرب وقت. عند قبولك ستظهر لك الطلبات هنا.',rej_t:'نعتذر، تم رفض طلبك',rej_p:'لم نتمكن من قبول طلب انضمامك حالياً. شكراً لاهتمامك بالعمل مع أطلس.',hi:'مرحباً',ord_t:'الطلبات المتاحة',accept:'قبول',wait:'انتظار',reject:'رفض',no_ord:'لا توجد طلبات الآن.',e_phone:'رقم الهاتف غير صحيح (مثال: 0612345678)',e_dup:'الهاتف أو البريد مسجل من قبل',e_inv:'أكمل جميع الحقول',e_acc:'بريد غير صحيح أو كلمة مرور قصيرة',e_bad:'البريد أو كلمة المرور غير صحيحة',e_taken:'تم أخذ الطلب',mk_picked:'تم الاستلام',mk_delivered:'تم التسليم',s_accepted:'مقبول',s_picked:'قيد التوصيل',s_delivered:'تم التسليم',s_cancelled:'ملغى',e_net:'تعذر الاتصال بالسيرفر، تأكد أنك على نفس الشبكة'},
+fr:{home:'Accueil',logout:'Déconnexion',title:'Espace livreurs',login:'Connexion',register:'Nouveau compte',f_name:'Nom complet',f_phone:'Téléphone',f_city:'Ville',f_addr:'Adresse',f_email:'E-mail',f_pass:'Mot de passe (6 caractères min.)',go_login:'Se connecter',go_reg:'Envoyer la demande',th_t:'Merci pour votre confiance !',th_p:'Votre demande est reçue. Nous vous contacterons très bientôt pour valider votre profil et lancer votre première livraison.',wait_t:'Demande en cours d’examen',wait_p:'Nous vous contacterons bientôt. Une fois accepté, vos commandes apparaîtront ici.',rej_t:'Désolé, votre demande est refusée',rej_p:'Nous ne pouvons pas accepter votre candidature pour le moment. Merci de votre intérêt pour Atlas.',hi:'Bonjour',ord_t:'Commandes disponibles',accept:'Accepter',wait:'En attente',reject:'Refuser',no_ord:'Aucune commande pour le moment.',e_phone:'Numéro invalide (ex : 0612345678)',e_dup:'Téléphone ou e-mail déjà inscrit',e_inv:'Remplissez tous les champs',e_acc:'E-mail invalide ou mot de passe trop court',e_bad:'E-mail ou mot de passe incorrect',e_taken:'Commande déjà prise',mk_picked:'Colis récupéré',mk_delivered:'Livré',s_accepted:'Accepté',s_picked:'En livraison',s_delivered:'Livré',s_cancelled:'Annulé',e_net:'Serveur injoignable, vérifiez le réseau'},
+en:{home:'Home',logout:'Log out',title:'Driver portal',login:'Sign in',register:'New account',f_name:'Full name',f_phone:'Phone',f_city:'City',f_addr:'Address',f_email:'Email',f_pass:'Password (min. 6 characters)',go_login:'Sign in',go_reg:'Submit application',th_t:'Thank you for your trust!',th_p:'We received your application and will contact you very soon so you can be approved and start your first delivery.',wait_t:'Application under review',wait_p:'We will contact you soon. Once approved, your orders will appear here.',rej_t:'Sorry, your application was declined',rej_p:'We cannot accept your application at the moment. Thank you for your interest in Atlas.',hi:'Hello',ord_t:'Available orders',accept:'Accept',wait:'Hold',reject:'Reject',no_ord:'No orders right now.',e_phone:'Invalid phone (e.g. 0612345678)',e_dup:'Phone or email already registered',e_inv:'Fill in all fields',e_acc:'Invalid email or password too short',e_bad:'Wrong email or password',e_taken:'Order already taken',mk_picked:'Mark picked up',mk_delivered:'Mark delivered',s_accepted:'Accepted',s_picked:'In delivery',s_delivered:'Delivered',s_cancelled:'Cancelled',e_net:'Cannot reach the server, check your network'}};
+const ALL={};['ar','fr','en'].forEach(l=>ALL[l]={...DH[l],...DD[l]});
+ALL.ar.e_net='تعذّر الاتصال بالسيرفر، تحقق من العنوان عبر ⚙ API';ALL.fr.e_net='Connexion au serveur impossible, vérifiez ⚙ API';ALL.en.e_net='Cannot reach the server, check ⚙ API';
+initCommon(ALL);
+$('#cfg').onclick=()=>{const v=prompt('API URL',API_BASE);if(v){localStorage.api=v.trim();location.reload()}};
+function view(){const v=location.hash.startsWith('#/driver')?'driver':'home';document.body.dataset.view=v;$('#vHome').hidden=v!=='home';$('#vDriver').hidden=v!=='driver';scrollTo(0,0)}
+addEventListener('hashchange',view);view();
+$$('[data-s]').forEach(a=>a.onclick=e=>{e.preventDefault();$('#nav').classList.remove('open');if(document.body.dataset.view!=='home')location.hash='#/';setTimeout(()=>document.getElementById(a.dataset.s).scrollIntoView({behavior:'smooth'}),60)});
+
+$('#burger').onclick=()=>$('#nav').classList.toggle('open');$$('#nav a').forEach(a=>a.onclick=()=>$('#nav').classList.remove('open'));
+setTimeout(()=>$('#splash').classList.add('hide'),1500);
+
+
+$('#city').innerHTML=CITIES.map(c=>`<option>${c}</option>`).join('');
+let MODE='login',ME=null,JUST=false,TOK=localStorage.dtok;
+function mode(m){MODE=m;$('#tLogin').classList.toggle('on',m==='login');$('#tReg').classList.toggle('on',m==='reg');
+ $$('.r').forEach(e=>e.hidden=m==='login');$('#go').textContent=t(m==='login'?'go_login':'go_reg');$('#err').textContent=''}
+$('#tLogin').onclick=()=>mode('login');$('#tReg').onclick=()=>mode('reg');
+const call=async(m,u,b)=>{let r;try{r=await fetch(API_BASE+u,{method:m,headers:{'Content-Type':'application/json',Authorization:'Bearer '+TOK},body:b&&JSON.stringify(b)})}catch(e){return {ok:false,j:{error:'net'}}}
+ if(r.status===401&&TOK&&u.startsWith('/api/driver/')){out();throw 0}return {ok:r.ok,j:await r.json()}};
+$('#form').onsubmit=async e=>{e.preventDefault();$('#err').textContent='';
+ const body=MODE==='login'?{email:email.value,password:pass.value}:{fullName:fullName.value,phone:phone.value,city:city.value,address:address.value,email:email.value,password:pass.value};
+ const {ok,j}=await call('POST',MODE==='login'?'/api/drivers/login':'/api/drivers',body);
+ if(!ok)return $('#err').textContent=t(j.error==='phone'?'e_phone':j.error==='duplicate'?'e_dup':j.error==='account'?'e_acc':j.error==='bad'?'e_bad':j.error==='net'?'e_net':'e_inv');
+ TOK=j.token;localStorage.dtok=TOK;JUST=MODE==='reg';pass.value='';load()};
+function btns(o){if(o.status==='open')return ['accept','wait','reject'].map(a=>`<button class="btn sm ${a==='accept'?'ok':a==='wait'?'warn':'bad'}" data-o="${o.id}" data-a="${a}">${t(a)}</button>`).join('');
+ if(o.driverId!==ME.driver.id)return '';const n=o.status==='accepted'?'picked':o.status==='picked'?'delivered':null;
+ return (n?`<button class="btn sm" data-o="${o.id}" data-p="${n}">${t('mk_'+n)}</button>`:'')+`<span class="badge b-accepted">${t('s_'+o.status)}</span>`}
+async function load(){const {ok,j}=await call('GET','/api/driver/me');if(!ok)return;ME=j;draw()}
+function draw(){if(!ME)return;$('#auth').hidden=true;$('#view').hidden=false;$('#logout').hidden=false;const d=ME.driver;let h='';
+ if(d.status==='waiting')h=`<div class="msg wait"><div class="e">${JUST?'✅':'⏳'}</div><h2 style="margin:10px 0">${t(JUST?'th_t':'wait_t')}</h2><p>${t(JUST?'th_p':'wait_p')}</p></div>`;
+ else if(d.status==='rejected')h=`<div class="msg bad"><div class="e">😔</div><h2 style="margin:10px 0">${t('rej_t')}</h2><p>${t('rej_p')}</p></div>`;
+ else h=`<h2>${t('hi')} ${esc(d.fullName)} 👋</h2><h3 style="margin-bottom:14px">${t('ord_t')}</h3><div class="grid" style="grid-template-columns:1fr">`+(ME.orders.length?ME.orders.map(o=>`<div class="card order"><div><b>${esc(o.ref)} · ${esc(o.product)}</b><p>${esc(o.from)} ➜ ${esc(o.to)} · ${o.price} MAD ${o.mine?`<span class="badge b-${o.mine}">${t(o.mine)}</span>`:''}${o.customer?`<br>👤 ${esc(o.customer)} · ${esc(o.cphone)} · ${esc(o.address)}`:''}</p></div><div class="a">${btns(o)}</div></div>`).join(''):`<p>${t('no_ord')}</p>`)+'</div>';
+ $('#view').innerHTML=h}
+$('#view').onclick=async e=>{const b=e.target.closest('button');if(!b)return;
+ const {ok,j}=b.dataset.p?await call('POST',`/api/driver/orders/${b.dataset.o}/progress`,{to:b.dataset.p}):await call('POST',`/api/driver/orders/${b.dataset.o}/respond`,{action:b.dataset.a});if(!ok&&j.error==='taken')alert(t('e_taken'));load()};
+function out(){localStorage.removeItem('dtok');TOK=null;ME=null;JUST=false;$('#view').hidden=true;$('#auth').hidden=false;$('#logout').hidden=true;mode('login')}
+$('#logout').onclick=out;
+window.onLang=()=>{mode(MODE);draw()};
+mode('login');if(TOK)load().catch(()=>{});
+setInterval(()=>TOK&&ME&&ME.driver.status!=='rejected'&&load().catch(()=>{}),15000);
+
+</script>
+</body></html>
