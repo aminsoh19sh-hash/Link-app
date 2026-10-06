@@ -1,7 +1,19 @@
 const $ = (id) => document.getElementById(id);
 
-let editingId = null;
-let apps = [];
+const FILTERS = [
+  { key: 'all', label: 'الكل' },
+  { key: 'apk', label: 'APK' },
+  { key: 'aab', label: 'AAB' },
+  { key: 'zip', label: 'ZIP' },
+  { key: 'html', label: 'HTML' },
+  { key: 'desktop', label: 'سطح المكتب' },
+  { key: 'other', label: 'أخرى' },
+];
+
+const BADGE = { apk: 'APK', aab: 'AAB', zip: 'ZIP', html: 'HTML', desktop: 'Desktop', other: 'ملف' };
+
+let files = [];
+let activeFilter = 'all';
 
 function toast(msg) {
   const t = $('toast');
@@ -10,14 +22,26 @@ function toast(msg) {
   setTimeout(() => t.classList.remove('show'), 1800);
 }
 
-function linkFor(id) {
-  return `${location.origin}/download/${id}`;
+function linkFor(name) {
+  return `${location.origin}/download/${encodeURIComponent(name)}`;
 }
 
 function fmtDate(iso) {
   const d = new Date(iso);
   const p = (n) => String(n).padStart(2, '0');
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
+
+function fmtSize(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  const units = ['KB', 'MB', 'GB', 'TB'];
+  let v = bytes / 1024;
+  let i = 0;
+  while (v >= 1024 && i < units.length - 1) {
+    v /= 1024;
+    i++;
+  }
+  return `${v.toFixed(v >= 100 ? 0 : 2)} ${units[i]}`;
 }
 
 async function copyText(text) {
@@ -37,132 +61,102 @@ async function copyText(text) {
   toast('تم نسخ الرابط');
 }
 
-function currentSource() {
-  return document.querySelector('input[name="source"]:checked').value;
+function renderStats() {
+  $('statCount').textContent = files.length;
+  $('statSize').textContent = fmtSize(files.reduce((s, f) => s + f.size, 0));
 }
 
-function setSource(value) {
-  document.querySelector(`input[name="source"][value="${value}"]`).checked = true;
-  $('fileBox').classList.toggle('hidden', value !== 'file');
-  $('urlBox').classList.toggle('hidden', value !== 'url');
-}
-
-document.querySelectorAll('input[name="source"]').forEach((r) => {
-  r.onchange = () => setSource(currentSource());
-});
-
-async function loadFiles(selected) {
-  const res = await fetch('/api/apk-files');
-  const files = await res.json();
-  const sel = $('apkSelect');
-  sel.innerHTML = '';
-  files.forEach((f) => {
-    const o = document.createElement('option');
-    o.value = f.name;
-    o.textContent = `${f.name} (${(f.size / 1024 / 1024).toFixed(2)} MB)`;
-    sel.appendChild(o);
+function renderFilters() {
+  const box = $('filters');
+  box.innerHTML = '';
+  FILTERS.forEach((f) => {
+    const count = f.key === 'all' ? files.length : files.filter((x) => x.type === f.key).length;
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip' + (activeFilter === f.key ? ' active' : '');
+    b.innerHTML = `${f.label} <span class="count">${count}</span>`;
+    b.onclick = () => {
+      activeFilter = f.key;
+      renderFilters();
+      renderTable();
+    };
+    box.appendChild(b);
   });
-  if (selected && files.some((f) => f.name === selected)) sel.value = selected;
-  $('noFiles').classList.toggle('hidden', files.length > 0);
 }
 
-async function loadApps() {
-  const res = await fetch('/api/apps');
-  apps = await res.json();
+function renderTable() {
+  const q = $('search').value.trim().toLowerCase();
+  const list = files.filter(
+    (f) => (activeFilter === 'all' || f.type === activeFilter) && f.name.toLowerCase().includes(q)
+  );
+
   const tbody = $('tbody');
   tbody.innerHTML = '';
-  $('empty').classList.toggle('hidden', apps.length > 0);
 
-  apps.forEach((a, i) => {
-    const link = linkFor(a.id);
-    const isUrl = a.source === 'url';
+  const empty = $('empty');
+  if (list.length === 0) {
+    empty.textContent = files.length === 0
+      ? 'لا توجد ملفات في مجلد apk. ضع ملفاتك هناك وستظهر هنا تلقائياً.'
+      : 'لا توجد نتائج مطابقة.';
+    empty.classList.remove('hidden');
+  } else {
+    empty.classList.add('hidden');
+  }
+
+  list.forEach((f, i) => {
+    const link = linkFor(f.name);
     const tr = document.createElement('tr');
-
     tr.innerHTML = `
       <td>${i + 1}</td>
-      <td></td>
-      <td class="fname"></td>
-      <td><div class="link-cell"><span></span><button class="btn small" data-act="copy">نسخ</button></div></td>
+      <td><div class="name-cell"><span class="badge"></span><span class="fname"></span></div></td>
       <td class="date"></td>
-      <td><div class="actions">
-        <a class="btn small primary" data-act="dl">تحميل</a>
-        <button class="btn small" data-act="edit">تعديل</button>
-        <button class="btn small danger" data-act="del">حذف</button>
-      </div></td>`;
+      <td class="size"></td>
+      <td><div class="link-cell"><a class="link"></a><button class="btn small" data-act="copy">نسخ</button></div></td>
+      <td><button class="btn small danger" data-act="del">حذف</button></td>`;
 
-    tr.children[1].textContent = a.name;
-    const src = tr.children[2];
-    src.textContent = (isUrl ? '🔗 ' : '📁 ') + (isUrl ? a.url : a.file);
-    src.title = isUrl ? a.url : a.file;
-    tr.querySelector('.link-cell span').textContent = link;
-    tr.querySelector('.link-cell span').title = link;
-    tr.querySelector('.date').textContent = fmtDate(a.updatedAt || a.createdAt);
+    const badge = tr.querySelector('.badge');
+    badge.textContent = BADGE[f.type];
+    badge.classList.add('t-' + f.type);
+    tr.querySelector('.fname').textContent = f.name;
+    tr.querySelector('.fname').title = f.name;
+    tr.querySelector('.date').textContent = fmtDate(f.date);
+    tr.querySelector('.size').textContent = fmtSize(f.size);
 
-    const dl = tr.querySelector('[data-act="dl"]');
-    dl.href = `/download/${a.id}`;
-    dl.setAttribute('download', '');
+    const a = tr.querySelector('a.link');
+    a.href = `/download/${encodeURIComponent(f.name)}`;
+    a.setAttribute('download', f.name);
+    a.textContent = link;
+    a.title = link;
 
     tr.querySelector('[data-act="copy"]').onclick = () => copyText(link);
-    tr.querySelector('[data-act="edit"]').onclick = () => openForm(a);
     tr.querySelector('[data-act="del"]').onclick = async () => {
-      if (!confirm(`حذف "${a.name}"؟`)) return;
-      await fetch(`/api/apps/${a.id}`, { method: 'DELETE' });
-      toast('تم الحذف');
-      loadApps();
+      if (!confirm(`سيتم حذف الملف نهائياً من مجلد apk:\n${f.name}\n\nهل تريد المتابعة؟`)) return;
+      const res = await fetch(`/api/files/${encodeURIComponent(f.name)}`, { method: 'DELETE' });
+      toast(res.ok ? 'تم حذف الملف' : 'تعذر حذف الملف');
+      load();
     };
     tbody.appendChild(tr);
   });
 }
 
-async function openForm(app) {
-  editingId = app ? app.id : null;
-  $('formTitle').textContent = app ? 'تعديل التطبيق' : 'تطبيق جديد';
-  $('appName').value = app ? app.name : '';
-  $('appUrl').value = app && app.source === 'url' ? app.url : '';
-  $('resultBox').classList.add('hidden');
-  await loadFiles(app && app.file);
-  setSource(app && app.source === 'url' ? 'url' : 'file');
-  $('formBox').classList.remove('hidden');
-  $('appName').focus();
-}
-
-function closeForm() {
-  $('formBox').classList.add('hidden');
-  editingId = null;
-}
-
-$('addBtn').onclick = () => openForm(null);
-$('cancelBtn').onclick = closeForm;
-$('refreshFiles').onclick = () => loadFiles($('apkSelect').value);
-
-$('appForm').onsubmit = async (e) => {
-  e.preventDefault();
-  const source = currentSource();
-  const body = { name: $('appName').value.trim(), source };
-  if (source === 'url') {
-    body.url = $('appUrl').value.trim();
-    if (!body.url) return toast('اكتب رابط الملف');
-  } else {
-    body.file = $('apkSelect').value;
-    if (!body.file) return toast('اختر ملف APK');
+async function load() {
+  try {
+    const res = await fetch('/api/files', { cache: 'no-store' });
+    files = await res.json();
+  } catch (e) {
+    return toast('تعذر الاتصال بالسيرفر');
   }
-  if (!body.name) return toast('اكتب اسم التطبيق');
+  renderStats();
+  renderFilters();
+  renderTable();
+}
 
-  const url = editingId ? `/api/apps/${editingId}` : '/api/apps';
-  const res = await fetch(url, {
-    method: editingId ? 'PUT' : 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
-  const data = await res.json();
-  if (!res.ok) return toast(data.error || 'حدث خطأ');
-
-  closeForm();
-  $('resultLink').value = linkFor(data.id);
-  $('resultBox').classList.remove('hidden');
-  await loadApps();
+$('search').oninput = renderTable;
+$('refreshBtn').onclick = () => {
+  load();
+  toast('تم التحديث');
 };
 
-$('copyResult').onclick = () => copyText($('resultLink').value);
-
-loadApps();
+load();
+// تحديث تلقائي لاكتشاف الملفات الجديدة
+setInterval(load, 15000);
